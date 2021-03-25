@@ -1,0 +1,108 @@
+<section>
+    <h2>Test Driven Development</h2>
+</section>
+<section>
+    <h3>
+        <a href="https://www.tutorialspoint.com/extreme_programming/extreme_programming_practices.htm">
+            Four areas of Extreme Programming
+        </a>
+    </h3>
+    <table class="table lower">
+        <tr><th>Fine scale feedback</th><th>Continuous process</th></tr>
+        <tr>
+            <td>
+                <ul>
+                    <li>Pair Programming</li>
+                    <li>Planning Game</li>
+                    <li><strong class="inside-color">Test Driven Development</strong></li>
+                    <li>Whole Team</li>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <li>Continuous Integration</li>
+                    <li>Design Improvement</li>
+                    <li>Small Releases</li>
+                </ul>
+            </td>
+        </tr>
+        <tr><th>Shared understanding</th><th>Programmer welfare</th></tr>
+        <tr>
+            <td>
+                <ul>
+                    <li>Coding Standards</li>
+                    <li>Collective Ownership</li>
+                    <li>Simple Design</li>
+                    <li>System Methaphor</li>
+                </ul>
+            </td>
+            <td>Sustainable Pace</td>
+        </tr>
+    </table>
+</section>
+<section>
+    <h3>Une question de cycles</h3>
+    <div>
+        <img src="resources/img/red-green-refactor.jpg" alt="Red, Green, Refactor" width="40%"/>
+    </div>
+    <div class="lower">
+        <a href="https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html">
+            The cycles of TDD by Uncle Bob
+        </a>
+    </div>
+</section>
+<section>
+    <h3>Nano cycles</h3>
+    <blockquote>
+        <ol>
+            <li>You must write a failing test before you write any production code.</li>
+            <li>You must not write more of a test than is sufficient to fail, or fail to compile.</li>
+            <li>You must not write more production code than is sufficient to make the currently failing test pass.</li>
+        </ol>
+    </blockquote>
+</section>
+<section>
+    <h3>Micro cycles</h3>
+    <blockquote>
+        <ol>
+            <li>Create a unit test <strong>until have one</strong> that fails</li>
+            <li>Write production code that makes that test pass.</li>
+            <li>Clean up the mess you just made.</li>
+        </ol>
+    </blockquote>
+</section>
+<section>
+    <h3>&Eacute;tape 1 - Ajouter un test</h3>
+    <p>Partir d'une page blanche permet de mieux s'abstraire des contraintes pour comprendre le comportement attendu.</p>
+    <div class="fragment">
+        <p><strong>Pour passer à l'étape suivante</strong>, ce test doit :</p>
+        <ul>
+            <li>&Eacute;chouer</li>
+            <li>&Ecirc;tre le seul test en échec</li>
+        </ul>
+    </div>
+</section>
+<section>
+    <h3>&Eacute;tape 2 - &Eacute;crire le code</h3>
+    <p>Faire passer le test, peu importe la manière.</p>
+    <ul class="fragment">
+        <li>Fake it: retourner une valeur constante ...</li>
+        <li>Triangulation: 2 exemples avant généralisation</li>
+        <li>Implémentation évidente: implementation réelle pour les cas simples</li>
+        <li>One to many: pour des listes, implémenter pour un cas puis pour plusieurs</li>
+    </ul>
+    <p class="fragment focus inside-color">Exécuter tous les tests, jusqu'à ce que le dernier test ajouté passe.</p>
+</section>
+<section>
+    <h3>&Eacute;tape 3 - Refactoring</h3>
+    <p><em>Améliorer le code produit sans en changer le comportement.</em></p>
+    <ul>
+        <li>DRY, YAGNI, SRP, KISS, SOLID ... Clean Code !</li>
+        <li>Généralisation du code ou des comportements similaires</li>
+        <li>Abstractions</li>
+        <li>Applicable sur le code de production et sur les tests</li>
+    </ul>
+    <p class="focus"><a href="https://blog.cleancoder.com/uncle-bob/2013/05/27/TheTransformationPriorityPremise.html" target="_blank">
+        Transformation priority premise
+    </a></p>
+</section>
