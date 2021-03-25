@@ -1,0 +1,425 @@
+<section>
+    <h2>How to ?</h2>
+</section>
+<section>
+    <h3>Sprint 0 : Prendre soin de son backlog</h3>
+    <blockquote class="fragment">
+        <p>What goes in production is what developers have understood</p>
+        <div class="author"><em>Alberto Brandolini</em></div>
+    </blockquote>
+    <ul>
+        <li class="fragment">Des US <strong>I</strong>dépendantes, <strong>N</strong>égociables, porteuses de <strong>V</strong>aleur, <strong>E</strong>stimables, <strong>S</strong>uffisamment petites et <strong>T</strong>estables</li>
+        <li class="fragment">Story Mapping</li>
+        <li class="fragment">Des critères d'acceptation détaillés et précis</li>
+        <li class="fragment">Des ateliers Example mapping pour guider l'implémentation</li>
+    </ul>
+</section>
+<section>
+    <h3>Des tests unitaires fiables</h3>
+    <ul>
+        <li><strong class="inside-color">F</strong>ast: fréquence d'exécution et feedback rapide</li>
+        <li><strong class="inside-color">I</strong>ndependant: exécutés sans contrainte d'ordre, sans effet de bord</li>
+        <li><strong class="inside-color">R</strong>epeatable: exécutable quelque soit l'environnement</li>
+        <li><strong class="inside-color">S</strong>elf-validating: passe ou échoue, sans intervention extérieure</li>
+        <li><strong class="inside-color">T</strong>imely: écrits au bon moment (juste avant le code de production ?)</li>
+    </ul>
+</section>
+<section>
+    <h3>Savoir quoi tester</h3>
+    <div><img src="resources/img/unit-testing-minimalist.png" alt="" width="40%"/></div>
+    <div class="lower">
+        <a href="https://www.youtube.com/watch?v=URSWYvyc42M" target="_blank">
+            The Magic Tricks of Testing by Sandi Metz
+        </a>
+    </div>
+</section>
+<section>
+    <h3>You'll never walk alone</h3>
+    <ul>
+        <li>Mettre en pratique en équipe</li>
+        <li>Pair / Mob Programming</li>
+        <li>L'entrainement avant la compétition (Katas)</li>
+        <li>Intégration continue</li>
+        <li>Code review</li>
+    </ul>
+</section>
+<section>
+    <pre><code class="hljs lang-php php" style="max-height:80vh; overflow: auto;">public function test_get_by_period()
+{
+    $date = Carbon::create(2019, 1, 1);
+
+    $serviceExportAccountingDtos = $this->exportAccounting->getByPeriod(
+        (clone $date)->firstOfMonth(),
+        (clone $date)->lastOfMonth()
+    );
+
+    self::assertCount(2, $serviceAccountingExports);
+    self::assertEquals('Service 1', $serviceAccountingExports[0]->getService()->getName());
+    self::assertCount(4, $serviceAccountingExports[0]->getPurchases());
+    self::assertCount(3, $serviceAccountingExports[0]->getSales());
+
+    self::assertEquals('Service 2', $serviceAccountingExports[1]->getService()->getName());
+    self::assertCount(0, $serviceAccountingExports[1]->getPurchases());
+    self::assertCount(4, $serviceAccountingExports[1]->getSales());
+
+    // Service1 sales
+    $sales = $serviceAccountingExports[0]->getSales();
+
+    self::assertEquals('VE', $sales[0]->getLabel());
+    self::assertEquals('310119', $sales[0]->getDate()->format('dmy'));
+    self::assertEquals('IPIP00001', $sales[0]->getBillReference());
+    self::assertEquals('411000', $sales[0]->getAccountingNumber());
+    self::assertEquals('CNAME', $sales[0]->getCorporationName());
+    self::assertEquals('NAME', $sales[0]->getCustomerLabel());
+    self::assertEquals(11, $sales[0]->getAmount());
+    self::assertEquals(AccountingExport::TYPE_DEBIT, $sales[0]->getType());
+    self::assertEquals('010119', $sales[0]->getDateDeadline()->format('dmy'));
+
+    self::assertEquals('VE', $sales[1]->getLabel());
+    self::assertEquals('310119', $sales[1]->getDate()->format('dmy'));
+    self::assertEquals('IPIP00001', $sales[1]->getBillReference());
+    self::assertEquals('706120', $sales[1]->getAccountingNumber());
+    self::assertEquals('CNAME', $sales[1]->getCorporationName());
+    self::assertEquals('NAME', $sales[1]->getCustomerLabel());
+    self::assertEquals(10, $sales[1]->getAmount());
+    self::assertEquals(AccountingExport::TYPE_CREDIT, $sales[1]->getType());
+    self::assertEquals('010119', $sales[1]->getDateDeadline()->format('dmy'));
+
+    self::assertEquals('VE', $sales[2]->getLabel());
+    self::assertEquals('310119', $sales[2]->getDate()->format('dmy'));
+    self::assertEquals('IPIP00001', $sales[2]->getBillReference());
+    self::assertEquals('445711', $sales[2]->getAccountingNumber());
+    self::assertEquals('CNAME', $sales[2]->getCorporationName());
+    self::assertEquals('NAME', $sales[2]->getCustomerLabel());
+    self::assertEquals(1, $sales[2]->getAmount());
+    self::assertEquals(AccountingExport::TYPE_CREDIT, $sales[2]->getType());
+    self::assertEquals('010119', $sales[2]->getDateDeadline()->format('dmy'));
+
+    // Service1 purchases
+    $purchases = $serviceAccountingExports[0]->getPurchases();
+
+    self::assertEquals('ACI360', $purchases[0]->getLabel());
+    self::assertEquals('310119', $purchases[0]->getDate()->format('dmy'));
+    self::assertEquals('IGIG00003', $purchases[0]->getBillReference());
+    self::assertEquals('401000', $purchases[0]->getAccountingNumber());
+    self::assertEquals('FIGROUP', $purchases[0]->getCorporationName());
+    self::assertEquals('OFFICE 2', $purchases[0]->getCustomerLabel());
+    self::assertEquals(10, $purchases[0]->getAmount());
+    self::assertEquals(AccountingExport::TYPE_CREDIT, $purchases[0]->getType());
+    self::assertEquals('010119', $purchases[0]->getDateDeadline()->format('dmy'));
+
+    self::assertEquals('ACI360', $purchases[1]->getLabel());
+    self::assertEquals('310119', $purchases[1]->getDate()->format('dmy'));
+    self::assertEquals('IGIG00003', $purchases[1]->getBillReference());
+    self::assertEquals('611210', $purchases[1]->getAccountingNumber());
+    self::assertEquals('FIGROUP', $purchases[1]->getCorporationName());
+    self::assertEquals('OFFICE 2', $purchases[1]->getCustomerLabel());
+    self::assertEquals(10, $purchases[1]->getAmount());
+    self::assertEquals(AccountingExport::TYPE_DEBIT, $purchases[1]->getType());
+    self::assertEquals('010119', $purchases[1]->getDateDeadline()->format('dmy'));
+
+    // Service2 sales
+    $sales = $serviceAccountingExports[1]->getSales();
+
+    self::assertEquals('VE', $sales[0]->getLabel());
+    self::assertEquals('310119', $sales[0]->getDate()->format('dmy'));
+    self::assertEquals('IGIG00003', $sales[0]->getBillReference());
+    self::assertEquals('411000', $sales[0]->getAccountingNumber());
+    self::assertEquals('CIPARIS', $sales[0]->getCorporationName());
+    self::assertEquals('OFFICE 1', $sales[0]->getCustomerLabel());
+    self::assertEquals(10, $sales[0]->getAmount());
+    self::assertEquals(AccountingExport::TYPE_DEBIT, $sales[0]->getType());
+    self::assertEquals('010119', $sales[0]->getDateDeadline()->format('dmy'));
+
+    self::assertEquals('VE', $sales[1]->getLabel());
+    self::assertEquals('310119', $sales[1]->getDate()->format('dmy'));
+    self::assertEquals('IGIG00003', $sales[1]->getBillReference());
+    self::assertEquals('706210', $sales[1]->getAccountingNumber());
+    self::assertEquals('CIPARIS', $sales[1]->getCorporationName());
+    self::assertEquals('OFFICE 1', $sales[1]->getCustomerLabel());
+    self::assertEquals(10, $sales[1]->getAmount());
+    self::assertEquals(AccountingExport::TYPE_CREDIT, $sales[1]->getType());
+    self::assertEquals('010119', $sales[1]->getDateDeadline()->format('dmy'));
+}
+
+public function setUp()
+{
+    Carbon::setTestNow(new Carbon('2019-01-01'));
+
+    $invoicedCustomer = (new Customer())
+        ->setId('1')
+        ->setSlug('slug')
+        ->setName('Name')
+        ->setShortname('Name')
+    ;
+
+    $finalCustomer = (new Customer())
+        ->setId('2')
+        ->setSlug('slug')
+        ->setName('Name')
+        ->setShortname('Name')
+    ;
+
+    $service1 = (new Provider())
+        ->setId('3')
+        ->setSlug('slug')
+        ->setName('Service 1')
+        ->setService(true)
+        ->setShortname('IP')
+    ;
+
+    $service2 = (new Provider())
+        ->setId('4')
+        ->setSlug('slug')
+        ->setName('Service 2')
+        ->setService(true)
+        ->setShortname('IG')
+    ;
+
+    $purchaseOrder1 = (new PurchaseOrder())
+        ->setId('1')
+        ->setSlug('po')
+        ->setReference('Ref')
+        ->setProject((new Project())
+            ->setDeadlinePayments(DeadlinePayments::AT_RECEPTION)
+            ->setVatRate(10)
+            ->setId('1')
+            ->setSlug('p')
+            ->setExternalCode('code')
+            ->setServiceCommercial($service1)
+            ->setFinalCustomer($finalCustomer)
+        )
+    ;
+
+    $purchaseOrder2 = (new PurchaseOrder())
+        ->setId('2')
+        ->setSlug('po')
+        ->setReference('Ref')
+        ->setProject((new Project())
+            ->setDeadlinePayments(DeadlinePayments::AT_RECEPTION)
+            ->setVatRate(0)
+            ->setId('2')
+            ->setSlug('p')
+            ->setExternalCode('code')
+            ->setServiceCommercial($service2)
+            ->setFinalCustomer($finalCustomer)
+        )
+    ;
+
+    $this->bill1 = (new Bill(BillType::CLIENT(), BillVersion::VERSION_1()))
+        ->setId('1')
+        ->setPurchaseOrder($purchaseOrder1)
+        ->setDate(Carbon::create(2019, 1, 1))
+        ->setSendingDate(Carbon::create(2019, 1, 1))
+        ->setPaymentDate(Carbon::create(2019, 1, 1))
+        ->setServiceBilling($service1)
+        ->setInvoicedCustomer($invoicedCustomer)
+        ->setStatus(BillStatus::PAYED)
+        ->createReference(null)
+        ->addDetail((new Detail())
+            ->setAmountWithoutVat(10)
+            ->setType(BillDetailType::OTHER_TURNOVER)
+        )
+    ;
+
+    $bill2 = (new Bill(BillType::CLIENT(), BillVersion::VERSION_1()))
+        ->setId('2')
+        ->setPurchaseOrder($purchaseOrder1)
+        ->setDate(Carbon::create(2019, 1, 1))
+        ->setSendingDate(Carbon::create(2019, 1, 1))
+        ->setPaymentDate(Carbon::create(2019, 1, 1))
+        ->setServiceBilling($service1)
+        ->setInvoicedCustomer($invoicedCustomer)
+        ->setStatus(BillStatus::PAYED)
+        ->createReference($this->bill1->getReference())
+        ->addDetail((new Detail())
+            ->setAmountWithoutVat(20)
+            ->setType(BillDetailType::OTHER_AMOUNTS)
+        )
+    ;
+
+    $bill3 = (new Bill(BillType::CLIENT(), BillVersion::VERSION_1()))
+        ->setId('3')
+        ->setPurchaseOrder($purchaseOrder2)
+        ->setDate(Carbon::create(2019, 1, 1))
+        ->setSendingDate(Carbon::create(2019, 1, 1))
+        ->setPaymentDate(Carbon::create(2019, 1, 1))
+        ->setServiceBilling($service2)
+        ->setInvoicedCustomer($service1)
+        ->setStatus(BillStatus::PAYED)
+        ->createReference($bill2->getReference())
+        ->addDetail((new Detail())
+            ->setAmountWithoutVat(10)
+            ->setType(BillDetailType::SERVICE_PROVISION)
+        )
+    ;
+
+    $credit = (new Credit(BillType::CLIENT(), BillVersion::VERSION_1()))
+        ->setId('3')
+        ->setPurchaseOrder($purchaseOrder2)
+        ->setDate(Carbon::create(2019, 1, 1))
+        ->setSendingDate(Carbon::create(2019, 1, 1))
+        ->setPaymentDate(Carbon::create(2019, 1, 1))
+        ->setServiceBilling($service2)
+        ->setInvoicedCustomer($service1)
+        ->setStatus(BillStatus::PAYED)
+        ->setBill($bill3)
+        ->createReference(null)
+        ->addDetail((new Detail())
+            ->setAmountWithoutVat(-10)
+            ->setType(BillDetailType::SERVICE_PROVISION)
+        )
+    ;
+
+    $corporationRepository = $this->createMock(CorporationRepository::class);
+    $corporationRepository->expects($this->any())
+        ->method('findAllServices')
+        ->willReturn([$service1, $service2]);
+
+    $billingRepository = $this->createMock(BillingRepository::class);
+    $billingRepository->expects($this->any())
+        ->method('findBillsSentByDatePeriod')
+        ->willReturn([$this->bill1, $bill2]);
+
+    $billingRepository->expects($this->any())
+        ->method('getByReferences')
+        ->willReturn([$this->bill1, $bill3, $credit]);
+
+    $entityManager = $this->createMock(EntityManagerInterface::class);
+    $entityManager->expects($this->any())
+        ->method('getRepository')
+        ->will($this->returnValueMap([
+            [Corporation::class, $corporationRepository],
+            [Billing::class, $billingRepository],
+        ]))
+    ;
+
+    $entityManager->expects($this->any())
+        ->method('getRepository')
+        ->willReturn($corporationRepository);
+
+    $this->accountingExport = new AccountingExport($entityManager);
+
+    Carbon::setTestNow();
+}
+</code></pre>
+</section>
+<section>
+    <h3>Réduire le coût d'écriture des tests</h3>
+    <blockquote>
+        <p>Make it correct, make it clear, make it concise, make it fast. In that order.</p>
+        <div class="author"><em>Wes Dyer</em></div>
+    </blockquote>
+</section>
+<section>
+    <h3>Tester le comportement, pas l'implémentation</h3>
+    <pre><code class="hljs lang-php php">class AccountingExportTest
+{
+    public function test_get_by_period() {...}
+}</code></pre>
+    <pre><code class="hljs lang-php php">class AccountingExportTest
+{
+    public function test_exports_sales_and_purchases_grouped_by_services_when_retrieved_by_period() {...}
+}</code></pre>
+</section>
+<section>
+    <h3>Arrange / Act / Assert</h3>
+    <pre><code class="hljs lang-php php">public function test_is_not_an_adult_when_its_age_is_lower_than_age_of_majority() {
+// Arrange
+// $this->setUp();
+
+// Act
+$date = Carbon::create(2019, 1, 1);
+
+$serviceExportAccountingDtos = $this->exportAccounting->getByPeriod(
+    (clone $date)->firstOfMonth(),
+    (clone $date)->lastOfMonth()
+);
+
+// Assert
+
+}</code></pre>
+</section>
+<section>
+    <h3>Introduicing phlunit</h3>
+    <pre><code class="hljs lang-bash bash">composer require --dev pitchart/phlunit</code></pre>
+    <p>Fluent assertions for phpunit</p>
+    <pre><code class="hljs lang-php php">Check::that(tdd())->with($phlunit)->isAnInstanceOf(Awesomeness::class);</code></pre>
+</section>
+<section>
+    <h3>Builder / Object Mother</h3>
+    <p>A Builder for that class that</p>
+    <ol>
+        <li>Has an instance variable for each constructor parameter</li>
+        <li>Initialises its instance variables to commonly used or safe values</li>
+        <li>Has a `build` method that creates a new object using the values in its instance variables</li>
+        <li>Has "chainable" public methods for overriding the values in its instance variables.</li>
+    </ol>
+</section>
+<section>
+    <pre><code class="hljs lang-php php">// $invoicedCustomer = (new Customer())->setId('1')->setSlug('slug')->setName('Name')->setShortname('Name');
+$invoicedCustomer = CustomerBuilder::create()
+    ->withName('Name')
+    ->build()
+;
+
+// $service1 = (new Provider())->setId('3')->setSlug('slug')->setName('Service 1')->setService(true)->setShortname('IP');
+$service1 = ProviderBuilder::anService()
+    ->withName('Service 1')
+    ->withId('3')
+    ->build()
+;
+    </code></pre>
+</section>
+<section>
+    <h3>Complex assertions</h3>
+    <pre><code class="hljs lang-php php"> // Asserts on each Purchase properties
+self::assertEquals('ACI360', $purchases[0]->getLabel());
+self::assertEquals('310119', $purchases[0]->getDate()->format('dmy'));
+self::assertEquals('IGIG00003', $purchases[0]->getBillReference());
+self::assertEquals('401000', $purchases[0]->getAccountingNumber());
+self::assertEquals('FIGROUP', $purchases[0]->getCorporationName());
+self::assertEquals('OFFICE 2', $purchases[0]->getCustomerLabel());
+self::assertEquals(10, $purchases[0]->getAmount());
+self::assertEquals(AccountingExport::TYPE_CREDIT, $purchases[0]->getType());
+self::assertEquals('010119', $purchases[0]->getDateDeadline()->format('dmy'));
+    </code></pre>
+</section>
+<section>
+    <h3>Custom assertions</h3>
+    <pre><code class="hljs lang-php php" style="max-height: 60vh; overflow: auto;">class PurchaseCheck implements FluentCheck {
+    use TypeCheck, FluentChecks, ConstraintCheck, WithMessage;
+    /** @var Purchase */
+    private $sut;
+
+    public function __construct(Purchase $sut) {...}
+
+    public function hasLabel(string $expected): self {
+        Assert::assertSame($expected, $this->sut->getLable(), $this->message);
+        $this->resetMessage();
+        return $this;
+    }
+    public function hasAmount(float $expected): self {
+        Assert::assertSame($expected, $this->sut->getAmount(), $this->message);
+        $this->resetMessage();
+        return $this;
+    }
+    // ...
+}</code></pre>
+    <pre><code class="hljs php lang-php">// File: test/bootstrap.php
+Check::registerChecksFor(Purchase::class, PurchaseCheck::class);</code></pre>
+</section>
+<section>
+    <h3>Refactoring</h3>
+    <pre><code class="hljs php lang-php">Check::that($purchases[0])
+    ->hasLabel('ACI360')
+    ->hasFormattedDate('310119');
+    ->hasBillReference'IGIG00003')
+    ->hasAccountingNumber('401000')
+    ->hasCorporationName('FIGROUP')
+    ->hasCustomerLabel('OFFICE 2')
+    ->hasAmount(10)
+    ->hasCreditType()
+    ->hasFormattedDeadline('010119')
+;</code></pre>
+</section>

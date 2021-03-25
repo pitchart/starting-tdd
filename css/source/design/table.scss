@@ -1,0 +1,12 @@
+.table {
+    display: table;
+    table-layout: auto;
+    width: 100%;
+    tr, &__row {
+        display: table-row;
+    }
+    td, th, &__cell {
+        vertical-align: top;
+        display: table-cell;
+    }
+}
